@@ -28,14 +28,19 @@ void Game::renderMenu() {
 
 	if (mouse_x >= 285 && mouse_y >= 425
 	 && mouse_x <= 615 && mouse_y <= 525) { //when the mouse is over the button
-		SDL_RenderCopy(renderer, sButtonHover, NULL, &sb_des);//show start hover button
-		if (mouse_click == true) {
-			SDL_RenderCopy(renderer, sButtonClick, NULL, &sb_des);//show click button
+		SDL_RenderCopy(renderer, sButtonHover, NULL, &sBG_des);//show start hover button
+		
+		if (mouse_click == true){
+			clicked = true;
+			SDL_RenderCopy(renderer, sButtonClick, NULL, &sBG_des);//show click button
+		}
+		if (mouse_click == false && clicked == true){
 			is_running = true;
 		}
+		
 	}
-	else {
-		SDL_RenderCopy(renderer, sButton, NULL, &sb_des);//show start button
+	else { 
+		SDL_RenderCopy(renderer, sButton, NULL, &sBG_des);//show start button
 	}
 
 	SDL_RenderPresent(renderer);
@@ -52,9 +57,7 @@ void Game::loadImages_setInfos() {
 	planet4 = IMG_LoadTexture(renderer, "images/Planet4.png");
 	planet5 = IMG_LoadTexture(renderer, "images/Planet5.png");
 	planet6 = IMG_LoadTexture(renderer, "images/Planet7.png");
-	laser1 = IMG_LoadTexture(renderer, "images/redline.png");
-	laser2 = IMG_LoadTexture(renderer, "images/redline.png");
-	laser3 = IMG_LoadTexture(renderer, "images/redline.png");
+	laser = IMG_LoadTexture(renderer, "images/redline.png");
 	alien = IMG_LoadTexture(renderer, "images/alien.png");
 	sButton = IMG_LoadTexture(renderer, "images/Button.png");
 	sButtonHover = IMG_LoadTexture(renderer, "images/Button Hover.png");
@@ -69,10 +72,10 @@ void Game::loadImages_setInfos() {
 	setDes(planet4_des, 150, 50, 200, 133);
 	setDes(planet5_des, 300, 600, 150, 100);
 	setDes(planet6_des, 570, 250, 150, 100);
-	setDes(laser_des1, 0, 0, 0, 0); // LOGIC: set w and h to 0 first,
-	setDes(laser_des2, 0, 0, 0, 0); // so it appears nothing initially,
-	setDes(laser_des3, 0, 0, 0, 0); // when someone pressed spacebar, assign a w and h
-	setDes(sb_des, 285, 425, 330, 100); // Button position
+	setDes(laser_des, 0, 0, 0, 0);  // LOGIC: set w and h to 0 first,
+									 // so it appears nothing initially,
+									 // when someone pressed spacebar, assign a w and h
+	setDes(sBG_des, 285, 425, 330, 100); // Button position
 	setDes(sMenuBG_des, 0, 0, 900, 650);
 
 	//load texts
@@ -190,8 +193,8 @@ void Game::update() { //update things on the screen
 	}
 
 	if (motion_detect[MOVE_RIGHT] == true) {
-		if (ship_des.x <= 800) { //to limit someone move out of scope
-			ship_des.x += speed;
+		if (ship_des.x <= 832) { //to limit someone move out of scope
+			ship_des.x += ship_speed;
 			cout << "X location is now at: " << ship_des.x << endl;
 		}
 		else {
@@ -201,7 +204,7 @@ void Game::update() { //update things on the screen
 	}
 	if (motion_detect[MOVE_LEFT] == true) {
 		if (ship_des.x >= 0) { //to limit someone move out of scope
-			ship_des.x -= speed;
+			ship_des.x -= ship_speed;
 			cout << "X location is now at: " << ship_des.x << endl;
 		}
 		else {
@@ -210,40 +213,18 @@ void Game::update() { //update things on the screen
 		//move the spaceship to the left
 	}
 	if (motion_detect[SHOOT] == true) {
-		//Limit 3 lasers only
-		//shoot
-		cout << laser_count << endl;
-		if (laser_count < 3) {
-			if (laser_count == 0) {
-				setDes(laser_des1, ship_des.x + 64 / 2 - 10 / 2, ship_des.y, 10, 20);
-				laser_count += 1;
+		//Shoot if someone press Spacebar
+		for (int i = 0; i <5; i++ ){
+			if (laser_coordinate[i]==0 && clock() >= laser_time +300){
+				laser_coordinate[i] = 1;
+				laser_time = clock(); //add a time because i want to add a delay on each laser shoot
+										  //so that player cannot spam lasers.
+				current_x[i] = ship_des.x + 32 - 5;
 			}
-			else if (laser_count == 1 && laser_des1.y <= ship_des.y - 50) {
-				setDes(laser_des2, ship_des.x + 64 / 2 - 10 / 2, ship_des.y, 10, 20);
-				laser_count += 1;
-			}
-			else if (laser_count == 2 && laser_des2.y <= ship_des.y - 50) {
-				setDes(laser_des3, ship_des.x + 64 / 2 - 10 / 2, ship_des.y, 10, 20);
-				laser_count += 1;
-			}
-		}
-		else {
-			if (laser_des1.y <= -20 && laser_des3.y <= ship_des.y - 50) {
-				laser_count -= 0;
-				setDes(laser_des1, ship_des.x + 64 / 2 - 10 / 2, ship_des.y, 10, 20);
-			}
-			if (laser_des2.y <= -20 && laser_des1.y <= ship_des.y - 50) {
-				laser_count -= 1;
-				setDes(laser_des2, ship_des.x + 64 / 2 - 10 / 2, ship_des.y, 10, 20);
-			}
-			if (laser_des3.y <= -20 && laser_des2.y <= ship_des.y - 50) {
-				laser_count -= 2;
-				setDes(laser_des3, ship_des.x + 64 / 2 - 10 / 2, ship_des.y, 10, 20);
-			}
-
 		}
 
 	}
+	//check the coordiantes of the laser constantly
 }
 
 void Game::render() { //painter function
@@ -261,16 +242,21 @@ void Game::render() { //painter function
 	SDL_RenderCopy(renderer, planet5, NULL, &planet5_des);
 	SDL_RenderCopy(renderer, planet6, NULL, &planet6_des);
 	SDL_RenderCopy(renderer, score_text, NULL, &score_rect);
-	if (laser_count >= 1) {
-
-		SDL_RenderCopy(renderer, laser1, NULL, &laser_des1);
-		SDL_RenderCopy(renderer, laser2, NULL, &laser_des2);
-		SDL_RenderCopy(renderer, laser3, NULL, &laser_des3);
-		laser_des1.y -= 3;
-		laser_des2.y -= 3;
-		laser_des3.y -= 3;
+	
+	for (int i = 0; i < 5; i++){
+		if (laser_coordinate[i] == 1){
+			
+			int y_des = ship_des.y + velocity[i];
+			int x_des = current_x[i];
+			velocity[i] -= laser_speed; //minus because going up.
+			setDes(laser_des, x_des, y_des, 10, 30);
+			SDL_RenderCopy(renderer, laser, NULL, &laser_des);
+			if (y_des <= -30){
+				laser_coordinate[i] = 0;
+				velocity[i] = 0;
+			}
+		}
 	}
-
 	for (int i = 0; i < 3; i++) { //iterate over the 2D array
 		for (int j = 0; j < 14; j++) {
 			if (aliens_coordinate[i][j] == 1) { //if there's an alien there
@@ -280,7 +266,7 @@ void Game::render() { //painter function
 				}
 
 				int y_des = 62 * i + 100 + increment_value;
-				int x_des = 49 * j;
+				int x_des = 64 * j;
 				setDes(alien_des, x_des, y_des, 62, 49);
 				SDL_RenderCopy(renderer, alien, NULL, &alien_des);
 			}
@@ -297,7 +283,7 @@ void Game::spawn_alien() {
 	srand(time(NULL)); //set a seed
 	//spawn 10 aliens with the generated row and column numbers
 	//SDL_RenderCopy(renderer, alien, NULL, &alien_des);
-	while (alien_count < limit) {
+	while (alien_count < alien_limit) {
 		int row = rand() % 3;
 		int column = rand() % 14;
 		if (aliens_coordinate[row][column] == 1) { //it's an alien there 
@@ -326,9 +312,7 @@ void Game::clean() { //DrAzeem mentioned before, dynamic memory allocation
 	SDL_DestroyTexture(planet4);
 	SDL_DestroyTexture(planet5);
 	SDL_DestroyTexture(planet6);
-	SDL_DestroyTexture(laser1);
-	SDL_DestroyTexture(laser2);
-	SDL_DestroyTexture(laser3);
+	SDL_DestroyTexture(laser);
 	SDL_DestroyTexture(sButton);
 	SDL_DestroyTexture(sButtonHover);
 	SDL_DestroyTexture(sButtonClick);
