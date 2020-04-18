@@ -46,8 +46,12 @@ void Game::loadImages_setInfos() {
 	spaceship = IMG_LoadTexture(renderer, "images/spaceship.png");
 	space = IMG_LoadTexture(renderer, "images/BG Color only.png");
 	white_stars = IMG_LoadTexture(renderer, "images/Stars Transparent.png");
-	planet = IMG_LoadTexture(renderer, "images/planet.png");
-	planet_big = IMG_LoadTexture(renderer, "images/planet.png");
+	planet1 = IMG_LoadTexture(renderer, "images/Planet8.png");
+	planet2 = IMG_LoadTexture(renderer, "images/Planet2.png");
+	planet3 = IMG_LoadTexture(renderer, "images/Planet3.png");
+	planet4 = IMG_LoadTexture(renderer, "images/Planet4.png");
+	planet5 = IMG_LoadTexture(renderer, "images/Planet5.png");
+	planet6 = IMG_LoadTexture(renderer, "images/Planet7.png");
 	laser1 = IMG_LoadTexture(renderer, "images/redline.png");
 	laser2 = IMG_LoadTexture(renderer, "images/redline.png");
 	laser3 = IMG_LoadTexture(renderer, "images/redline.png");
@@ -59,8 +63,12 @@ void Game::loadImages_setInfos() {
 	setDes(ship_des, 900 / 2 - 50, 580, 64, 64);
 	setDes(space_des, 0, 0, 900, 650);
 	setDes(star_des, 0, -650, 900, 1300);
-	setDes(planet_des, 100, 50, 50, 50);
-	setDes(big_des, 600, 200, 100, 100);
+	setDes(planet1_des, 700, 450, 150, 100);
+	setDes(planet2_des, 20, 350, 150, 100);
+	setDes(planet3_des, 300, 400, 50, 33);
+	setDes(planet4_des, 150, 50, 200, 133);
+	setDes(planet5_des, 300, 600, 150, 100);
+	setDes(planet6_des, 570, 250, 150, 100);
 	setDes(laser_des1, 0, 0, 0, 0); // LOGIC: set w and h to 0 first,
 	setDes(laser_des2, 0, 0, 0, 0); // so it appears nothing initially,
 	setDes(laser_des3, 0, 0, 0, 0); // when someone pressed spacebar, assign a w and h
@@ -149,16 +157,32 @@ void Game::handle_event() {
 
 void Game::update() { //update things on the screen
 			//planets keep moving at background
-	planet_des.y += 1;
-	big_des.y += 1;
+	planet1_des.y +=1;
+	planet2_des.y +=1;
+	planet3_des.y +=1;
+	planet4_des.y +=1;
+	planet5_des.y +=1;
+	planet6_des.y +=1;
 	Sleep(10);
-	if (planet_des.y == 650) {
-		planet_des.y = -50; //reset
+	if (planet1_des.y == 650) {
+		planet1_des.y = -100; //reset
 	}
-	if (big_des.y == 650) {
-		big_des.y = -100; //reset
+	if (planet2_des.y == 650) {
+		planet2_des.y = -100; //reset
 	}
-
+	if (planet3_des.y == 650) {
+		planet3_des.y = -100; //reset
+	}
+	if (planet4_des.y == 650) {
+		planet4_des.y = -100; //reset
+	}
+	if (planet5_des.y == 650) {
+		planet5_des.y = -100; //reset
+	}
+	if (planet6_des.y == 650) {
+		planet6_des.y = -100; //reset
+	}
+	
 	//white stars keep moving at background
 	star_des.y += 1;
 	if (star_des.y == 0) {
@@ -230,8 +254,12 @@ void Game::render() { //painter function
 	SDL_RenderClear(renderer); //clear the previous screen
 	SDL_RenderCopy(renderer, space, NULL, &space_des); //paint my picture!
 	SDL_RenderCopy(renderer, white_stars, NULL, &star_des); //paint my white stars!
-	SDL_RenderCopy(renderer, planet, NULL, &planet_des);
-	SDL_RenderCopy(renderer, planet_big, NULL, &big_des);
+	SDL_RenderCopy(renderer, planet1, NULL, &planet1_des);
+	SDL_RenderCopy(renderer, planet2, NULL, &planet2_des);
+	SDL_RenderCopy(renderer, planet3, NULL, &planet3_des);
+	SDL_RenderCopy(renderer, planet4, NULL, &planet4_des);
+	SDL_RenderCopy(renderer, planet5, NULL, &planet5_des);
+	SDL_RenderCopy(renderer, planet6, NULL, &planet6_des);
 	SDL_RenderCopy(renderer, score_text, NULL, &score_rect);
 	if (laser_count >= 1) {
 
@@ -292,8 +320,12 @@ void Game::clean() { //DrAzeem mentioned before, dynamic memory allocation
 	SDL_DestroyTexture(spaceship);
 	SDL_DestroyTexture(space);
 	SDL_DestroyTexture(white_stars);
-	SDL_DestroyTexture(planet);
-	SDL_DestroyTexture(planet_big);
+	SDL_DestroyTexture(planet1);
+	SDL_DestroyTexture(planet2);
+	SDL_DestroyTexture(planet3);
+	SDL_DestroyTexture(planet4);
+	SDL_DestroyTexture(planet5);
+	SDL_DestroyTexture(planet6);
 	SDL_DestroyTexture(laser1);
 	SDL_DestroyTexture(laser2);
 	SDL_DestroyTexture(laser3);
@@ -310,7 +342,3 @@ void Game::clean() { //DrAzeem mentioned before, dynamic memory allocation
 Game::~Game() {
 	cout << "Class Game has reached the end of its lifetime --- destructing..." << endl;
 }
-
-
-
-
