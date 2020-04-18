@@ -38,8 +38,8 @@ private:
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	SDL_Texture* spaceship, * space, * white_stars, * planet, * planet_big;
-	SDL_Rect ship_des, space_des, star_des, planet_des, big_des;
+	SDL_Texture* spaceship, * space, * white_stars, * planet1, * planet2, * planet3, * planet4, * planet5, * planet6;
+	SDL_Rect ship_des, space_des, star_des, planet1_des, planet2_des, planet3_des, planet4_des, planet5_des, planet6_des;
 	SDL_Texture* laser1, * laser2, * laser3; // Only allow 3 users per screen
 	SDL_Rect laser_des1, laser_des2, laser_des3;
 	SDL_Texture* sButton, * sButtonHover, * sButtonClick;
@@ -74,6 +74,5 @@ public:
 };
 
 #endif
-
 
 
