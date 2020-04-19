@@ -63,6 +63,7 @@ void Game::loadImages_setInfos() {
 	sButtonHover = IMG_LoadTexture(renderer, "images/Button Hover.png");
 	sButtonClick = IMG_LoadTexture(renderer, "images/Button Click.png");
 	sMenuBG = IMG_LoadTexture(renderer, "images/Start Menu Background.png");
+	scorebar = IMG_LoadTexture(renderer, "images/scorebar.png");
 	setDes(ship_des, 900 / 2 - 50, 580, 64, 64);
 	setDes(space_des, 0, 0, 900, 650);
 	setDes(star_des, 0, -650, 900, 1300);
@@ -77,15 +78,15 @@ void Game::loadImages_setInfos() {
 									 // when someone pressed spacebar, assign a w and h
 	setDes(sBG_des, 285, 425, 330, 100); // Button position
 	setDes(sMenuBG_des, 0, 0, 900, 650);
-
+	setDes(scorebar_des, 10, 10, 300, 80);
 	//load texts
 
-	my_font = TTF_OpenFont("font/OpenSans-Bold.ttf", 100); //load our font
+	my_font = TTF_OpenFont("font/Roboto-Bold.ttf", 400); //load our font
 	my_color = { 255, 255, 255 }; //set the color of font to white
 	SDL_Surface* text_surface = TTF_RenderText_Solid(my_font, text.c_str(), my_color);
 	//not declaring this in private because we only need to use it locally
 	score_text = SDL_CreateTextureFromSurface(renderer, text_surface);
-	setDes(score_rect, 400, 0, 200, 100);
+	setDes(score_rect, 30, 25, 200, 50);
 	SDL_FreeSurface(text_surface); //have to free it after using, something like what we did in clean() function
 
 }
@@ -241,7 +242,9 @@ void Game::render() { //painter function
 	SDL_RenderCopy(renderer, planet4, NULL, &planet4_des);
 	SDL_RenderCopy(renderer, planet5, NULL, &planet5_des);
 	SDL_RenderCopy(renderer, planet6, NULL, &planet6_des);
+	SDL_RenderCopy(renderer,scorebar,NULL, &scorebar_des);
 	SDL_RenderCopy(renderer, score_text, NULL, &score_rect);
+	
 	
 	for (int i = 0; i < 5; i++){
 		if (laser_coordinate[i] == 1){
@@ -269,14 +272,14 @@ void Game::render() { //painter function
 				int x_des = 64 * j;
 				setDes(alien_des, x_des, y_des, 62, 49);
 				SDL_RenderCopy(renderer, alien, NULL, &alien_des);
+				
 			}
 		}
 	}
-
 	SDL_RenderCopy(renderer, spaceship, NULL, &ship_des); //to draw on a new paper
 
 	SDL_RenderPresent(renderer); //start painting! 
-
+    
 }
 
 void Game::spawn_alien() {
@@ -319,6 +322,7 @@ void Game::clean() { //DrAzeem mentioned before, dynamic memory allocation
 	SDL_DestroyTexture(alien);
 	SDL_DestroyTexture(score_text);
 	SDL_DestroyTexture(sMenuBG);
+	SDL_DestroyTexture(scorebar);
 	SDL_Quit();
 
 }
