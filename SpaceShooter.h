@@ -82,12 +82,14 @@ private:
 	SDL_Rect alien_des;
 	
 	//---- Score Variables ----//
+	SDL_Texture* scorebar;
+	SDL_Rect scorebar_des;
 	int current_score = 0;
 	SDL_Rect score_rect;
 	TTF_Font* my_font; //load our text
 	SDL_Color my_color;//set the color of font to white
 	SDL_Texture* score_text;
-	string text = "Score is " + to_string(current_score);
+	string text = "Score: " + to_string(current_score);
 	int increment_value = 0;
 	int time_now = time(NULL);
 	
@@ -108,6 +110,8 @@ public:
 };
 
 #endif
+
+
 
 
 
