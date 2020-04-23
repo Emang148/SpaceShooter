@@ -91,6 +91,14 @@ void Game::loadImages_setInfos() {
 	setDes(score_rect, 30, 25, 200, 50);
 	SDL_FreeSurface(text_surface); //have to free it after using, something like what we did in clean() function
 	
+	wave_font = TTF_OpenFont("font/RobotoCondensed-BoldItalic.ttf", 600); //load our font
+	wave_color = { 255, 253, 217 }; //set the color of font to white
+	SDL_Surface* wave_surface = TTF_RenderText_Solid(wave_font, wave_text.c_str(), wave_color);
+	//not declaring this in private because we only need to use it locally
+	w_text = SDL_CreateTextureFromSurface(renderer, wave_surface);
+	setDes(wave_rect, 665, 10, 200, 80);
+	SDL_FreeSurface(wave_surface); //have to free it after using, something like what we did in clean() function
+	
 	//-------------------//
 	
 	setDes(end_des, 0, 565, 900, 10);
@@ -249,6 +257,7 @@ void Game::render() { //painter function
 	SDL_RenderCopy(renderer, planet6, NULL, &planet6_des);
 	SDL_RenderCopy(renderer,scorebar,NULL, &scorebar_des);
 	SDL_RenderCopy(renderer, score_text, NULL, &score_rect);
+	SDL_RenderCopy(renderer, w_text, NULL, &wave_rect);
 	SDL_RenderCopy(renderer, end_line, NULL, &end_des);
 	// this is a triple for loop, which can arise a lot of problems
 	// like computational cost, run-time delays etc, for example:
@@ -322,6 +331,7 @@ void Game::render() { //painter function
 					
 			}	
 			if (alien_count == 0){
+					
 					motion_detect[SHOOT] = false; //prohibit shooting at this time
 					if (clock() >= end_game_pause + 2500){ //pause for roughly 2 seconds
 						if (alien_limit <42){
@@ -330,7 +340,13 @@ void Game::render() { //painter function
 						spawn_alien();
 						increment_value = 0;
 						alien_speed += 1;
-						cout << alien_limit << "asdasdasd" << endl;
+						current_wave += 1;
+						
+						//update wave
+						string wave_text = "Wave " + to_string(current_wave);
+						SDL_Surface* wave_surface = TTF_RenderText_Solid(wave_font, wave_text.c_str(), wave_color);
+						w_text = SDL_CreateTextureFromSurface(renderer, wave_surface);
+						SDL_FreeSurface(wave_surface); 
 					}
 				}
 		}
