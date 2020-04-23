@@ -11,11 +11,11 @@ int main(int argc, char* argv[]) { //command line arguments
 		game.handle_event(); //mouse position and click detection
 	}
 
+	game.spawn_alien();
 	while (game.is_it_running() == true) {
 			game.handle_event();
 			game.render();
 			game.update();
-			game.spawn_alien();
 			
 			//run as long as is_running is true
 		
