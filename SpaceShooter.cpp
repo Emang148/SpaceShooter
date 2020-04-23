@@ -73,7 +73,7 @@ void Game::loadImages_setInfos() {
 	setDes(planet4_des, 150, 50, 200, 133);
 	setDes(planet5_des, 300, 600, 150, 100);
 	setDes(planet6_des, 570, 250, 150, 100);
-	setDes(laser_des, 0, 0, 0, 0);  // LOGIC: set w and h to 0 first,
+	setDes(laser_des, -1, -1, 0, 0);  // LOGIC: set w and h to 0 first,
 									 // so it appears nothing initially,
 									 // when someone pressed spacebar, assign a w and h
 	setDes(sBG_des, 285, 425, 330, 100); // Button position
@@ -245,37 +245,74 @@ void Game::render() { //painter function
 	SDL_RenderCopy(renderer,scorebar,NULL, &scorebar_des);
 	SDL_RenderCopy(renderer, score_text, NULL, &score_rect);
 	
+	// this is a triple for loop, which can arise a lot of problems
+	// like computational cost, run-time delays etc, for example:
+	// the lasers will slow down or speed up depends on where i put it
+	// hence, we have to be very careful
 	
-	for (int i = 0; i < 5; i++){
-		if (laser_coordinate[i] == 1){
+	for (int laser_count = 0; laser_count < 5; laser_count++){
+		
+		if (laser_coordinate[laser_count] == 1){ 
 			
-			int y_des = ship_des.y + velocity[i];
-			int x_des = current_x[i];
-			velocity[i] -= laser_speed; //minus because going up.
-			setDes(laser_des, x_des, y_des, 10, 30);
+			int laser_y = ship_des.y + velocity[laser_count];
+			int laser_x = current_x[laser_count];
+			//
+			velocity[laser_count] -= laser_speed; //minus because going up.
+			setDes(laser_des, laser_x, laser_y, 10, 30);
 			SDL_RenderCopy(renderer, laser, NULL, &laser_des);
-			if (y_des <= -30){
-				laser_coordinate[i] = 0;
-				velocity[i] = 0;
-			}
+			
+			if (laser_y <= -30){
+				laser_coordinate[laser_count] = 0;
+				velocity[laser_count] = 0;
+			}	
+			
 		}
-	}
-	for (int i = 0; i < 3; i++) { //iterate over the 2D array
-		for (int j = 0; j < 14; j++) {
-			if (aliens_coordinate[i][j] == 1) { //if there's an alien there
-				if (time(NULL) == time_now + 2) { //move the alien by 3 pixels every 2 seconds
-					time_now += 2; // increment the time by 2 so the condition would meet every 2 seconds
-					increment_value += 3;
-				}
-
-				int y_des = 62 * i + 100 + increment_value;
-				int x_des = 64 * j;
-				setDes(alien_des, x_des, y_des, 62, 49);
-				SDL_RenderCopy(renderer, alien, NULL, &alien_des);
+		for (int i = 0; i < 3; i++) { //iterate over the 2D array
+			for (int j = 0; j < 14; j++) {
+				if (aliens_coordinate[i][j] == 1) { //if there's an alien there
+					if (time(NULL) == time_now + 2) { //move the alien by 3 pixels every 2 seconds
+						time_now += 2; // increment the time by 2 so the condition would meet every 2 seconds
+						increment_value += (3 + alien_speed);
+					}
+					
+					int alien_y = 62 * i + 100 + increment_value;
+					int alien_x = 64 * j; 
+					setDes(alien_des, alien_x, alien_y, 62, 49);
+					SDL_RenderCopy(renderer, alien, NULL, &alien_des);
+					
 				
-			}
+					
+					if (laser_des.x >= alien_des.x && laser_des.x <= alien_des.x +62 && laser_des.y <= alien_des.y + 49 ){
+						
+						aliens_coordinate[i][j] = 0;
+						alien_count -= 1;
+						laser_coordinate[laser_count] = 0;
+						velocity[laser_count] = 0;
+						end_game_pause = clock();
+						}
+					
+					
+				
+					}
+					
+				}
+			
+					// sometiems the laser blocked by alien 
+					// 
+					
+			}	
+			if (alien_count == 0){
+					motion_detect[SHOOT] = false; //prohibit shooting at this time
+					if (clock() >= end_game_pause + 2500){ //pause for roughly 2 seconds
+						if (alien_limit <42){
+							alien_limit += 1;
+							}
+						spawn_alien();
+						increment_value = 0;
+						alien_speed += 1;
+					}
+				}
 		}
-	}
 	SDL_RenderCopy(renderer, spaceship, NULL, &ship_des); //to draw on a new paper
 
 	SDL_RenderPresent(renderer); //start painting! 
