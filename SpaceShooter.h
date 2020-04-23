@@ -82,6 +82,10 @@ private:
 	SDL_Texture* alien;
 	SDL_Rect alien_des;
 	
+	//---- Picture and coordiante for end game line ----//
+	SDL_Texture* end_line;
+	SDL_Rect end_des;
+	
 	//---- Score Variables ----//
 	SDL_Texture* scorebar;
 	SDL_Rect scorebar_des;
@@ -111,4 +115,3 @@ public:
 };
 
 #endif
-
