@@ -270,9 +270,10 @@ void Game::render() { //painter function
 		for (int i = 0; i < 3; i++) { //iterate over the 2D array
 			for (int j = 0; j < 14; j++) {
 				if (aliens_coordinate[i][j] == 1) { //if there's an alien there
-					if (time(NULL) == time_now + 2) { //move the alien by 3 pixels every 2 seconds
+					if (time(NULL) >= time_now + 2) { //move the alien by 3 pixels every 2 seconds
 						time_now += 2; // increment the time by 2 so the condition would meet every 2 seconds
 						increment_value += (3 + alien_speed);
+						cout << "Increment value: " << increment_value << endl;
 					}
 					
 					int alien_y = 62 * i + 100 + increment_value;
@@ -282,7 +283,8 @@ void Game::render() { //painter function
 					
 				
 					
-					if (laser_des.x >= alien_des.x && laser_des.x <= alien_des.x +62 && laser_des.y <= alien_des.y + 49 ){
+					if (laser_des.x+10 >= alien_des.x && laser_des.x <= alien_des.x +62 
+					&& laser_des.y <= alien_des.y + 49 && laser_des.y >= alien_des.y){
 						
 						aliens_coordinate[i][j] = 0;
 						alien_count -= 1;
@@ -310,6 +312,7 @@ void Game::render() { //painter function
 						spawn_alien();
 						increment_value = 0;
 						alien_speed += 1;
+						cout << alien_limit << "asdasdasd" << endl;
 					}
 				}
 		}
