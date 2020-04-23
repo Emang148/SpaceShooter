@@ -28,6 +28,7 @@ private:
 	bool start_game = false;//game start variable
 	
 	//----- Laser Variables ------//
+	int debug = 0;
 	int laser_speed = 3; 
 	clock_t laser_time = clock(); //the controller of laser shoot rate
 								  //use clock instead of time because we 
@@ -56,8 +57,8 @@ private:
 	//---------------//
 	
 	//----- Alien Variables -----//
-	int alien_limit = 10, alien_speed = 3,  alien_count = 0;
-	
+	int alien_limit = 10, alien_speed = 0,  alien_count = 0;
+	clock_t end_game_pause = clock();
 	bool aliens_coordinate[3][14] = { {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 									  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 									  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -110,8 +111,4 @@ public:
 };
 
 #endif
-
-
-
-
 
