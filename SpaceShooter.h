@@ -59,6 +59,8 @@ private:
 	//----- Alien Variables -----//
 	int alien_limit = 10, alien_speed = 0,  alien_count = 0;
 	clock_t end_game_pause = clock();
+	int increment_value = 0;
+	int time_now = time(NULL);
 	bool aliens_coordinate[3][14] = { {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 									  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 									  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -95,8 +97,14 @@ private:
 	SDL_Color my_color;//set the color of font to white
 	SDL_Texture* score_text;
 	string text = "Score: " + to_string(current_score);
-	int increment_value = 0;
-	int time_now = time(NULL);
+	int current_wave = 1;
+	SDL_Rect wave_rect;
+	TTF_Font* wave_font; //load our text
+	SDL_Color wave_color;//set the color of font to white
+	SDL_Texture* w_text;
+	string wave_text = "Wave " + to_string(current_wave);
+	
+	
 	
 
 public:
@@ -115,3 +123,4 @@ public:
 };
 
 #endif
+
