@@ -64,6 +64,7 @@ void Game::loadImages_setInfos() {
 	sButtonClick = IMG_LoadTexture(renderer, "images/Button Click.png");
 	sMenuBG = IMG_LoadTexture(renderer, "images/Start Menu Background.png");
 	scorebar = IMG_LoadTexture(renderer, "images/scorebar.png");
+	end_line = IMG_LoadTexture(renderer, "images/line.png");
 	setDes(ship_des, 900 / 2 - 50, 580, 64, 64);
 	setDes(space_des, 0, 0, 900, 650);
 	setDes(star_des, 0, -650, 900, 1300);
@@ -79,7 +80,8 @@ void Game::loadImages_setInfos() {
 	setDes(sBG_des, 285, 425, 330, 100); // Button position
 	setDes(sMenuBG_des, 0, 0, 900, 650);
 	setDes(scorebar_des, 10, 10, 300, 80);
-	//load texts
+	
+	//---- load texts ----//
 
 	my_font = TTF_OpenFont("font/Roboto-Bold.ttf", 400); //load our font
 	my_color = { 255, 255, 255 }; //set the color of font to white
@@ -88,7 +90,10 @@ void Game::loadImages_setInfos() {
 	score_text = SDL_CreateTextureFromSurface(renderer, text_surface);
 	setDes(score_rect, 30, 25, 200, 50);
 	SDL_FreeSurface(text_surface); //have to free it after using, something like what we did in clean() function
-
+	
+	//-------------------//
+	
+	setDes(end_des, 0, 565, 900, 10);
 }
 
 void Game::setDes(SDL_Rect& rect, int hori, int vert, int width, int height) {
@@ -161,13 +166,13 @@ void Game::handle_event() {
 
 void Game::update() { //update things on the screen
 			//planets keep moving at background
-	planet1_des.y +=1;
+	planet1_des.y +=1; 
 	planet2_des.y +=1;
 	planet3_des.y +=1;
 	planet4_des.y +=1;
 	planet5_des.y +=1;
 	planet6_des.y +=1;
-	Sleep(10);
+	Sleep(10); //threading substitution
 	if (planet1_des.y == 650) {
 		planet1_des.y = -100; //reset
 	}
@@ -244,7 +249,7 @@ void Game::render() { //painter function
 	SDL_RenderCopy(renderer, planet6, NULL, &planet6_des);
 	SDL_RenderCopy(renderer,scorebar,NULL, &scorebar_des);
 	SDL_RenderCopy(renderer, score_text, NULL, &score_rect);
-	
+	SDL_RenderCopy(renderer, end_line, NULL, &end_des);
 	// this is a triple for loop, which can arise a lot of problems
 	// like computational cost, run-time delays etc, for example:
 	// the lasers will slow down or speed up depends on where i put it
@@ -267,13 +272,13 @@ void Game::render() { //painter function
 			}	
 			
 		}
+		
 		for (int i = 0; i < 3; i++) { //iterate over the 2D array
 			for (int j = 0; j < 14; j++) {
 				if (aliens_coordinate[i][j] == 1) { //if there's an alien there
 					if (time(NULL) >= time_now + 2) { //move the alien by 3 pixels every 2 seconds
 						time_now += 2; // increment the time by 2 so the condition would meet every 2 seconds
 						increment_value += (3 + alien_speed);
-						cout << "Increment value: " << increment_value << endl;
 					}
 					
 					int alien_y = 62 * i + 100 + increment_value;
@@ -281,10 +286,23 @@ void Game::render() { //painter function
 					setDes(alien_des, alien_x, alien_y, 62, 49);
 					SDL_RenderCopy(renderer, alien, NULL, &alien_des);
 					
+					
+					if (alien_y+49 >= 570){ //touched the line
+						is_running = false;
+						cout << "You lose!" << endl;
+					}
 				
 					
 					if (laser_des.x+10 >= alien_des.x && laser_des.x <= alien_des.x +62 
 					&& laser_des.y <= alien_des.y + 49 && laser_des.y >= alien_des.y){
+						
+						//Update score
+						current_score += 5;
+						text = "Score: " + to_string(current_score);
+						SDL_Surface* text_surface = TTF_RenderText_Solid(my_font, text.c_str(), my_color);
+						score_text = SDL_CreateTextureFromSurface(renderer, text_surface);
+						SDL_FreeSurface(text_surface); 
+						//-------------
 						
 						aliens_coordinate[i][j] = 0;
 						alien_count -= 1;
@@ -363,6 +381,7 @@ void Game::clean() { //DrAzeem mentioned before, dynamic memory allocation
 	SDL_DestroyTexture(score_text);
 	SDL_DestroyTexture(sMenuBG);
 	SDL_DestroyTexture(scorebar);
+	SDL_DestroyTexture(end_line);
 	SDL_Quit();
 
 }
