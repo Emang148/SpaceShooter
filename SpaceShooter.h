@@ -120,6 +120,17 @@ public:
 	void clean();
 
 	~Game();
+/* 
+Designers for this Space Shooter Game:
+Aisyah - 
+Fara - 
+Nazrin - 
+Calson - 
+Jerlson - 
+Idlan - 
+Emang - Designed for the spaceship and also the video production
+*/
+
 };
 
 #endif
